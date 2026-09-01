@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--screenshot only-on-failure --tracing retain-on-failure"
+
+[tool.ruff]
+line-length = 99
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+
+[tool.black]
+line-length = 99
+target-version = ["py312"]

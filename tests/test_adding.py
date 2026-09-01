@@ -7,10 +7,12 @@ ADD_CASES = [
     pytest.param("Buy groceries for the week", id="english-text"),
     pytest.param("Купить продукты на неделю", id="cyrillic"),
     pytest.param("牛乳を買いに行く", id="japanese"),
+    pytest.param("شراء الحليب والخبز صباح الغد", id="arabic-rtl"),
     pytest.param("Prépare le café, bitte schön, señor", id="diacritics"),
     pytest.param("Plan the team offsite 🌍✈️🎉", id="emoji"),
     pytest.param("Read chapters 4, 5 and 12 before 2030", id="text-with-numbers"),
     pytest.param("1234567890", id="digits-only"),
+    pytest.param("Order 2 pizzas & 3 sodas for $45 (party!)", id="special-characters"),
 ]
 
 

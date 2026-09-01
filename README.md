@@ -10,8 +10,8 @@ built with Playwright for Python and pytest.
 | # | Requirement | Covered by |
 |---|-------------|------------|
 | 1 | A new todo item can be added using English text | `tests/test_adding.py::test_new_todo_item_is_added` — case `english-text` |
-| 2 | A new todo item can be added using non-English characters | `tests/test_adding.py::test_new_todo_item_is_added` — cases `cyrillic`, `japanese`, `diacritics`, `emoji` |
-| 3 | A new todo item can be added that includes numbers | `tests/test_adding.py::test_new_todo_item_is_added` — cases `text-with-numbers`, `digits-only` |
+| 2 | A new todo item can be added using non-English characters | `tests/test_adding.py::test_new_todo_item_is_added` — cases `cyrillic`, `japanese`, `arabic-rtl`, `diacritics`, `emoji` |
+| 3 | A new todo item can be added that includes numbers | `tests/test_adding.py::test_new_todo_item_is_added` — cases `text-with-numbers`, `digits-only`, `special-characters` |
 | 4 | A todo item can be marked as completed and appears correctly in the "Completed" view | `tests/test_completing.py::test_completed_item_appears_in_completed_view` |
 | 5 | A todo item can be deleted and no longer appears in any view | `tests/test_deleting.py::test_deleted_item_disappears_from_every_view` — checks the All, Active and Completed views, for both an active and a completed item |
 | 6 | The "Active" filter correctly shows only items that are not completed | `tests/test_filtering.py::test_active_filter_shows_only_active_items` |
@@ -54,6 +54,7 @@ pytest
 | Different browser | `pytest --browser firefox` (run `playwright install firefox` once) |
 | Parallel run | `pytest -n auto` |
 | One file | `pytest tests/test_filtering.py` |
+| Slow motion for debugging | `pytest --headed --slowmo 300` |
 | Verbose test names | `pytest -v` |
 
 When a test fails, a screenshot and a Playwright trace are saved under `test-results/`.
@@ -79,15 +80,26 @@ tests/                 one file per functional area, assertions via expect()
   additionally clears `localStorage`, where the application persists todos. Tests are independent,
   order-agnostic and safe to run in parallel.
 - **Parametrization** covers all three "add" requirements in a single test with readable case ids
-  instead of near-identical copies; the non-English set spans Cyrillic, Japanese, diacritics and
-  emoji.
+  instead of near-identical copies; the data set spans Cyrillic, Japanese, Arabic (right-to-left),
+  diacritics, emoji and HTML-sensitive special characters.
 - **Deletion is verified in all three views** (All, Active, Completed), matching the literal
   wording of the requirement, and for both an active and a completed item.
 - **Scope is limited to the seven required scenarios.** Adjacent features (editing, mark all as
   complete, clearing completed, persistence across reloads) are deliberately out of scope.
 
+## Development
+
+Linting and formatting are enforced with ruff and black:
+
+```
+pip install -r requirements-dev.txt
+ruff check .
+black --check .
+```
+
 ## Continuous integration
 
-GitHub Actions ([tests.yml](.github/workflows/tests.yml)) runs the suite headless with Chromium
-on every push and pull request. For a failed run, screenshots and traces are attached to the run
-as the `test-artifacts` artifact.
+GitHub Actions ([tests.yml](.github/workflows/tests.yml)) runs two jobs on every push and pull
+request: `lint` (ruff and black) and `test` (the suite, headless with Chromium, in parallel).
+For a failed run, screenshots and traces are attached to the run as the `test-artifacts`
+artifact.

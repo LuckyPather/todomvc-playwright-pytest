@@ -40,7 +40,7 @@ def covers(*requirements: Requirement) -> Callable[[F], F]:
     """Attach the requirements a test verifies as links in the Allure report."""
 
     def decorator(test: F) -> F:
-        for requirement in reversed(requirements):
+        for requirement in requirements:
             test = allure.link(
                 requirement.url,
                 name=f"{requirement.id}: {requirement.title}",

@@ -7,16 +7,20 @@ from playwright.sync_api import Page
 from pages.todo_page import TodoPage
 from tests.seeds import SeededTodos
 
+DEFAULT_APP_URL = "https://demo.playwright.dev/todomvc/"
+
 
 @pytest.fixture
-def todo_page(page: Page) -> TodoPage:
+def todo_page(page: Page, base_url: str | None) -> TodoPage:
     """A ``TodoPage`` opened on a clean application state.
 
+    The application URL comes from the ``--base-url`` option (or the
+    ``PYTEST_BASE_URL`` variable) and falls back to the public demo.
     pytest-playwright gives every test a fresh browser context, but the
     application persists todos in localStorage, so it is cleared explicitly
     rather than relying on context isolation.
     """
-    todo = TodoPage(page)
+    todo = TodoPage(page, base_url or DEFAULT_APP_URL)
     todo.open()
     todo.clear_storage()
     return todo

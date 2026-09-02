@@ -4,8 +4,6 @@ from typing import Literal
 
 from playwright.sync_api import Locator, Page
 
-APP_URL = "https://demo.playwright.dev/todomvc/"
-
 FilterName = Literal["All", "Active", "Completed"]
 
 # Hash route the application navigates to when a filter link is clicked.
@@ -23,15 +21,16 @@ class TodoPage:
     tests, built on Playwright's auto-waiting ``expect()``.
     """
 
-    def __init__(self, page: Page) -> None:
+    def __init__(self, page: Page, url: str) -> None:
         self.page = page
+        self.url = url
         self.new_todo_input = page.get_by_placeholder("What needs to be done?")
         self.todo_items = page.get_by_test_id("todo-item")
         self.todo_titles = page.get_by_test_id("todo-title")
         self.items_left_counter = page.get_by_test_id("todo-count")
 
     def open(self) -> None:
-        self.page.goto(APP_URL)
+        self.page.goto(self.url)
 
     def clear_storage(self) -> None:
         """Remove persisted todos so every test starts from a clean slate."""

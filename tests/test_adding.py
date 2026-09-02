@@ -1,5 +1,7 @@
 """Adding new todo items: English text, non-English characters, numbers."""
 
+import re
+
 import pytest
 from playwright.sync_api import expect
 
@@ -43,8 +45,10 @@ def test_new_todo_item_is_added(todo_page: TodoPage, text: str) -> None:
 def test_surrounding_whitespace_is_trimmed(todo_page: TodoPage) -> None:
     todo_page.add_todo("   Trim me   ")
 
-    expect(todo_page.todo_titles).to_have_text(["Trim me"])
-    expect(todo_page.item("Trim me")).to_have_count(1)
+    # Anchored pattern on purpose: plain-string matching normalizes whitespace
+    # on both sides and would pass even if the title kept its padding.
+    expect(todo_page.todo_titles).to_have_text([re.compile(r"^Trim me$")])
+    expect(todo_page.items_left_counter).to_have_text("1 item left")
 
 
 @pytest.mark.edge

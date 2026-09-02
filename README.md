@@ -69,12 +69,12 @@ pytest
 | Watch the browser (headed mode) | `pytest --headed` |
 | Different browser | `pytest --browser firefox` (run `playwright install firefox` once) |
 | Parallel run | `pytest -n auto` |
-| Smoke subset (one scenario per area) | `pytest -m smoke` |
+| Smoke subset (at least one scenario per area) | `pytest -m smoke` |
 | Core requirements only, without edge cases | `pytest -m "not edge"` |
 | One functional area | `pytest -m filtering` (also `adding`, `completing`, `deleting`) |
 | One parametrized case | `pytest -k cyrillic` |
 | Slow motion for debugging | `pytest --headed --slowmo 300` |
-| Verbose test names | `pytest -v` |
+| Another deployment of the application | `pytest --base-url http://localhost:8080/` (or set `PYTEST_BASE_URL`) |
 
 Markers are registered in `pyproject.toml` and enforced with `--strict-markers`; run
 `pytest --markers` to list them.
@@ -98,7 +98,7 @@ the page URL as attachments; pytest markers appear as tags.
 ## Project structure
 
 ```
-conftest.py            fixtures (clean page, seeded todo list) and the Allure failure hook
+conftest.py            fixtures (clean page, seeded todo list), default application URL, Allure failure hook
 pages/todo_page.py     page object: locators, user actions and filter routes for TodoMVC
 tests/seeds.py         shared test data: a seeded list with active and completed items
 tests/test_*.py        one file per functional area, assertions via expect()
@@ -112,8 +112,9 @@ requirements*.txt      pinned runtime and development dependencies
 - **Page object** (`pages/todo_page.py`) holds locators and user actions in one place, so tests
   read as user scenarios. Assertions stay in the tests and use Playwright's auto-waiting
   `expect()` — no sleeps or manual retries anywhere.
-- **Semantic locators only**: placeholder text, `data-testid` attributes, ARIA roles and labels.
-  No XPath or positional CSS chains, so tests survive markup changes.
+- **Semantic locators only**: placeholder text, `data-testid` attributes, ARIA roles with their
+  accessible names, and exact visible text. No XPath or positional CSS chains, so tests survive
+  markup changes.
 - **Clean state per test**: every test gets a fresh browser context, and the `todo_page` fixture
   additionally clears `localStorage`, where the application persists todos. Tests are independent,
   order-agnostic and safe to run in parallel.

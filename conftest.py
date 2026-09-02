@@ -27,6 +27,12 @@ def todo_page(page: Page, base_url: str | None) -> TodoPage:
 
 
 @pytest.fixture
+def case_id(request: pytest.FixtureRequest, browser_name: str) -> str:
+    """The parametrize id of the current case without the browser prefix added by the plugin."""
+    return request.node.callspec.id.removeprefix(f"{browser_name}-")
+
+
+@pytest.fixture
 def seeded_todos(todo_page: TodoPage) -> SeededTodos:
     """A clean page pre-filled with three todos, one of them completed."""
     return SeededTodos.seed(todo_page)

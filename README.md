@@ -7,6 +7,9 @@ built with Playwright for Python and pytest.
 
 ## Requirements coverage
 
+The requirements, with their acceptance criteria, are described in
+[docs/requirements.md](docs/requirements.md); each test links to the ones it verifies.
+
 | # | Requirement | Covered by |
 |---|-------------|------------|
 | 1 | A new todo item can be added using English text | `tests/test_adding.py::test_new_todo_item_is_added` — case `english-text` |
@@ -92,16 +95,22 @@ allure serve allure-results
 ```
 
 The report of the latest `main` build is published to GitHub Pages:
-https://luckypather.github.io/todomvc-playwright-pytest/. Failed tests carry a screenshot and
-the page URL as attachments; pytest markers appear as tags.
+https://luckypather.github.io/todomvc-playwright-pytest/.
+
+Each test is annotated for the report with a readable title (built at run time for parametrized
+cases), a description, a severity, a stable id and links to the requirements it covers; page
+object actions and assertion groups are recorded as steps. Failed tests carry a screenshot and
+the page URL as attachments, and pytest markers appear as tags.
 
 ## Project structure
 
 ```
-conftest.py            fixtures (clean page, seeded todo list), default application URL, Allure failure hook
-pages/todo_page.py     page object: locators, user actions and filter routes for TodoMVC
+conftest.py            fixtures (clean page, seeded todo list, case id), default application URL, Allure failure hook
+pages/todo_page.py     page object: locators, user actions (recorded as Allure steps) and filter routes
+tests/requirements.py  the requirements as data, plus the decorator that links a test to them
 tests/seeds.py         shared test data: a seeded list with active and completed items
 tests/test_*.py        one file per functional area, assertions via expect()
+docs/requirements.md   the requirements with acceptance criteria
 pyproject.toml         pytest, ruff and black configuration
 requirements*.txt      pinned runtime and development dependencies
 .github/workflows/     CI pipeline

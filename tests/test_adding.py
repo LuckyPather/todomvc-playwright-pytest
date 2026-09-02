@@ -5,8 +5,10 @@ from playwright.sync_api import expect
 
 from pages.todo_page import TodoPage
 
+pytestmark = pytest.mark.adding
+
 ADD_CASES = [
-    pytest.param("Buy groceries for the week", id="english-text"),
+    pytest.param("Buy groceries for the week", id="english-text", marks=pytest.mark.smoke),
     pytest.param("Купить продукты на неделю", id="cyrillic"),
     pytest.param("牛乳を買いに行く", id="japanese"),
     pytest.param("شراء الحليب والخبز صباح الغد", id="arabic-rtl"),

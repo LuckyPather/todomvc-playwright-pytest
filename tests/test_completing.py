@@ -1,10 +1,14 @@
 """Marking a todo item as completed."""
 
+import pytest
 from playwright.sync_api import expect
 
 from pages.todo_page import TodoPage
 
+pytestmark = pytest.mark.completing
 
+
+@pytest.mark.smoke
 def test_completed_item_appears_in_completed_view(todo_page: TodoPage) -> None:
     todo_page.add_todos("Write the report", "Review pull requests")
     report = todo_page.item("Write the report")

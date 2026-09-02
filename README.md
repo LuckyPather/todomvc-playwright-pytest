@@ -53,9 +53,14 @@ pytest
 | Watch the browser (headed mode) | `pytest --headed` |
 | Different browser | `pytest --browser firefox` (run `playwright install firefox` once) |
 | Parallel run | `pytest -n auto` |
-| One file | `pytest tests/test_filtering.py` |
+| Smoke subset (one scenario per area) | `pytest -m smoke` |
+| One functional area | `pytest -m filtering` (also `adding`, `completing`, `deleting`) |
+| One parametrized case | `pytest -k cyrillic` |
 | Slow motion for debugging | `pytest --headed --slowmo 300` |
 | Verbose test names | `pytest -v` |
+
+Markers are registered in `pyproject.toml` and enforced with `--strict-markers`; run
+`pytest --markers` to list them.
 
 When a test fails, a screenshot and a Playwright trace are saved under `test-results/`.
 Open a trace with `playwright show-trace <path-to-trace.zip>`.

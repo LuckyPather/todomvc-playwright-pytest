@@ -1,7 +1,14 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "--screenshot only-on-failure --tracing retain-on-failure"
+addopts = "--strict-markers --screenshot only-on-failure --tracing retain-on-failure"
+markers = [
+    "smoke: one fast representative scenario per functional area",
+    "adding: adding new todo items",
+    "completing: marking todo items as completed",
+    "deleting: deleting todo items",
+    "filtering: the Active and Completed filters",
+]
 
 [tool.ruff]
 line-length = 99

@@ -7,8 +7,15 @@ from playwright.sync_api import expect
 
 from pages.todo_page import FILTER_ROUTES, TodoPage
 
+pytestmark = pytest.mark.deleting
 
-@pytest.mark.parametrize("completed", [False, True], ids=["active-item", "completed-item"])
+DELETE_CASES = [
+    pytest.param(False, id="active-item", marks=pytest.mark.smoke),
+    pytest.param(True, id="completed-item"),
+]
+
+
+@pytest.mark.parametrize("completed", DELETE_CASES)
 def test_deleted_item_disappears_from_every_view(todo_page: TodoPage, completed: bool) -> None:
     todo_page.add_todos("Keep this task", "Delete this task")
     if completed:

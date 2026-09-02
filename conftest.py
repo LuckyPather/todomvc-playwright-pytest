@@ -2,6 +2,7 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.todo_page import TodoPage
+from tests.seeds import SeededTodos
 
 
 @pytest.fixture
@@ -16,3 +17,9 @@ def todo_page(page: Page) -> TodoPage:
     todo.open()
     todo.clear_storage()
     return todo
+
+
+@pytest.fixture
+def seeded_todos(todo_page: TodoPage) -> SeededTodos:
+    """A clean page pre-filled with three todos, one of them completed."""
+    return SeededTodos.seed(todo_page)

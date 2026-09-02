@@ -14,3 +14,8 @@ REQUIREMENTS = {
     "R6": 'The "Active" filter shows only items that are not completed',
     "R7": 'The "Completed" filter shows only items that have been marked as completed',
 }
+
+# Todos entered by the seeded_todos fixture, in insertion order, and the ones it marks completed.
+SEEDED_TODOS = ("Walk the dog", "Pay the bills", "Water the plants")
+COMPLETED_TODOS = ("Pay the bills",)
+ACTIVE_TODOS = tuple(text for text in SEEDED_TODOS if text not in COMPLETED_TODOS)

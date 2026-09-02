@@ -108,8 +108,7 @@ the page URL as attachments, and pytest markers appear as tags.
 ```
 conftest.py            fixtures (clean page, seeded todo list, case id), default application URL, Allure hooks
 pages/todo_page.py     page object: locators, user actions (recorded as Allure steps) and filter routes
-tests/const.py         requirement ids and titles, the link target for the covers marker
-tests/seeds.py         shared test data: a seeded list with active and completed items
+tests/const.py         requirement ids and titles, seeded test data
 tests/test_*.py        one file per functional area, assertions via expect()
 docs/requirements.md   the requirements with acceptance criteria
 pyproject.toml         pytest, ruff and black configuration
@@ -134,9 +133,9 @@ requirements*.txt      pinned runtime and development dependencies
 - **Deletion is verified in all three views** (All, Active, Completed), matching the literal
   wording of the requirement, and for both an active and a completed item.
 - **Shared setup lives in fixtures, not in tests.** Scenarios that start from "a list with one
-  completed item" use the `seeded_todos` fixture, which returns the seeded data alongside the
-  page, so expected values are derived from the same source as the setup. Scenarios where the
-  setup is the subject of the test (adding, completing) keep it inline for readability.
+  completed item" use the `seeded_todos` fixture; the seeded items are constants in
+  `tests/const.py`, so expected values come from the same source as the setup. Scenarios where
+  the setup is the subject of the test (adding, completing) keep it inline for readability.
 - **Plain test functions, no test classes.** Grouping is done by module and by pytest markers,
   which is all that a suite without shared mutable state needs.
 - **Scope stays around the seven required flows.** Edge cases cover boundaries of those flows;

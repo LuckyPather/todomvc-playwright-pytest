@@ -5,8 +5,7 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.todo_page import TodoPage
-from tests.const import REQUIREMENTS, REQUIREMENTS_DOC
-from tests.seeds import SeededTodos
+from tests.const import COMPLETED_TODOS, REQUIREMENTS, REQUIREMENTS_DOC, SEEDED_TODOS
 
 DEFAULT_APP_URL = "https://demo.playwright.dev/todomvc/"
 
@@ -34,9 +33,12 @@ def case_id(request: pytest.FixtureRequest, browser_name: str) -> str:
 
 
 @pytest.fixture
-def seeded_todos(todo_page: TodoPage) -> SeededTodos:
-    """A clean page pre-filled with three todos, one of them completed."""
-    return SeededTodos.seed(todo_page)
+def seeded_todos(todo_page: TodoPage) -> TodoPage:
+    """A clean page pre-filled with ``SEEDED_TODOS``, with ``COMPLETED_TODOS`` marked completed."""
+    todo_page.add_todos(*SEEDED_TODOS)
+    for text in COMPLETED_TODOS:
+        todo_page.mark_completed(text)
+    return todo_page
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:

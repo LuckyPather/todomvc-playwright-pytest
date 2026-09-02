@@ -64,8 +64,10 @@ Open a trace with `playwright show-trace <path-to-trace.zip>`.
 
 ```
 conftest.py            fixture: page object on a clean application state
-pages/todo_page.py     page object: locators and user actions for TodoMVC
+pages/todo_page.py     page object: locators, user actions and filter routes for TodoMVC
 tests/                 one file per functional area, assertions via expect()
+pyproject.toml         pytest, ruff and black configuration
+requirements*.txt      pinned runtime and development dependencies
 .github/workflows/     CI pipeline
 ```
 

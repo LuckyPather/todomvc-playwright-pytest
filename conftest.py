@@ -5,6 +5,7 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.todo_page import TodoPage
+from tests.const import REQUIREMENTS, REQUIREMENTS_DOC
 from tests.seeds import SeededTodos
 
 DEFAULT_APP_URL = "https://demo.playwright.dev/todomvc/"
@@ -36,6 +37,24 @@ def case_id(request: pytest.FixtureRequest, browser_name: str) -> str:
 def seeded_todos(todo_page: TodoPage) -> SeededTodos:
     """A clean page pre-filled with three todos, one of them completed."""
     return SeededTodos.seed(todo_page)
+
+
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    """Turn ``@pytest.mark.covers("R1", ...)`` into Allure links to the requirements."""
+    for item in items:
+        for marker in item.iter_markers("covers"):
+            for requirement_id in marker.args:
+                if requirement_id not in REQUIREMENTS:
+                    raise pytest.UsageError(
+                        f"{item.nodeid}: unknown requirement {requirement_id!r} in @covers"
+                    )
+                item.add_marker(
+                    allure.link(
+                        f"{REQUIREMENTS_DOC}#{requirement_id.lower()}",
+                        name=f"{requirement_id}: {REQUIREMENTS[requirement_id]}",
+                        link_type="requirement",
+                    )
+                )
 
 
 @pytest.hookimpl(hookwrapper=True)

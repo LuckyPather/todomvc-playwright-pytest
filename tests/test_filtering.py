@@ -7,7 +7,6 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.todo_page import FILTER_ROUTES, TodoPage
-from tests.requirements import R6, R7, covers
 from tests.seeds import SeededTodos, items_left
 
 pytestmark = [pytest.mark.filtering, allure.feature("Todo list"), allure.story("Filtering")]
@@ -16,7 +15,7 @@ pytestmark = [pytest.mark.filtering, allure.feature("Todo list"), allure.story("
 @allure.id("FILTER-1")
 @allure.title('The "Active" filter shows only active items')
 @allure.severity(allure.severity_level.CRITICAL)
-@covers(R6)
+@pytest.mark.covers("R6")
 @pytest.mark.smoke
 def test_active_filter_shows_only_active_items(seeded_todos: SeededTodos) -> None:
     """With a mix of active and completed items, the Active view lists the active ones only."""
@@ -37,7 +36,7 @@ def test_active_filter_shows_only_active_items(seeded_todos: SeededTodos) -> Non
 @allure.id("FILTER-2")
 @allure.title('The "Completed" filter shows only completed items')
 @allure.severity(allure.severity_level.CRITICAL)
-@covers(R7)
+@pytest.mark.covers("R7")
 @pytest.mark.smoke
 def test_completed_filter_shows_only_completed_items(seeded_todos: SeededTodos) -> None:
     """With a mix of active and completed items, the Completed view lists only completed ones."""
@@ -58,7 +57,7 @@ def test_completed_filter_shows_only_completed_items(seeded_todos: SeededTodos) 
 @allure.id("FILTER-3")
 @allure.title('The "Active" view is empty when every item is completed')
 @allure.severity(allure.severity_level.NORMAL)
-@covers(R6)
+@pytest.mark.covers("R6")
 @pytest.mark.edge
 def test_active_filter_is_empty_when_every_item_is_completed(seeded_todos: SeededTodos) -> None:
     """Once every item is completed, the Active view is empty and the counter reads zero."""
@@ -77,7 +76,7 @@ def test_active_filter_is_empty_when_every_item_is_completed(seeded_todos: Seede
 @allure.id("FILTER-4")
 @allure.title('The "Completed" view is empty when nothing is completed')
 @allure.severity(allure.severity_level.NORMAL)
-@covers(R7)
+@pytest.mark.covers("R7")
 @pytest.mark.edge
 def test_completed_filter_is_empty_when_nothing_is_completed(todo_page: TodoPage) -> None:
     """Without completed items, the Completed view is empty while the counter still counts."""

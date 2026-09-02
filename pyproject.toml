@@ -15,6 +15,7 @@ markers = [
   "completing: marking todo items as completed",
   "deleting: deleting todo items",
   "filtering: the Active and Completed filters",
+  "covers(*ids): requirement ids from docs/requirements.md the test verifies, linked in Allure",
 ]
 
 [tool.ruff]

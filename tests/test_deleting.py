@@ -7,7 +7,6 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.todo_page import FILTER_ROUTES, TodoPage
-from tests.requirements import R5, covers
 from tests.seeds import SeededTodos, items_left
 
 pytestmark = [pytest.mark.deleting, allure.feature("Todo list"), allure.story("Deleting items")]
@@ -20,7 +19,7 @@ DELETE_CASES = [
 
 @allure.id("DELETE-1")
 @allure.severity(allure.severity_level.CRITICAL)
-@covers(R5)
+@pytest.mark.covers("R5")
 @pytest.mark.parametrize("target", DELETE_CASES)
 def test_deleted_item_disappears_from_every_view(
     seeded_todos: SeededTodos, target: str, case_id: str
@@ -50,7 +49,7 @@ def test_deleted_item_disappears_from_every_view(
 @allure.id("DELETE-2")
 @allure.title("Deleting the only item leaves an empty list")
 @allure.severity(allure.severity_level.NORMAL)
-@covers(R5)
+@pytest.mark.covers("R5")
 @pytest.mark.edge
 def test_deleting_the_only_item_leaves_an_empty_list(todo_page: TodoPage) -> None:
     """With the last item gone, the list is empty and the footer with the counter is hidden."""

@@ -5,7 +5,6 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.todo_page import TodoPage
-from tests.requirements import R4, covers
 
 pytestmark = [
     pytest.mark.completing,
@@ -17,7 +16,7 @@ pytestmark = [
 @allure.id("COMPLETE-1")
 @allure.title('A completed item appears in the "Completed" view')
 @allure.severity(allure.severity_level.CRITICAL)
-@covers(R4)
+@pytest.mark.covers("R4")
 @pytest.mark.smoke
 def test_completed_item_appears_in_completed_view(todo_page: TodoPage) -> None:
     """Ticking the checkbox of an item marks it completed and moves it to the Completed view."""

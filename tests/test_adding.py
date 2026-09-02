@@ -7,7 +7,6 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.todo_page import TodoPage
-from tests.requirements import R1, R2, R3, covers
 
 pytestmark = [pytest.mark.adding, allure.feature("Todo list"), allure.story("Adding items")]
 
@@ -36,7 +35,7 @@ BLANK_CASES = [
 
 @allure.id("ADD-1")
 @allure.severity(allure.severity_level.CRITICAL)
-@covers(R1, R2, R3)
+@pytest.mark.covers("R1", "R2", "R3")
 @pytest.mark.parametrize("text", ADD_CASES)
 def test_new_todo_item_is_added(todo_page: TodoPage, text: str, case_id: str) -> None:
     """A todo item entered in the input field appears in the list with its exact text."""
@@ -54,7 +53,7 @@ def test_new_todo_item_is_added(todo_page: TodoPage, text: str, case_id: str) ->
 @allure.id("ADD-2")
 @allure.title("Surrounding whitespace is trimmed from a new item")
 @allure.severity(allure.severity_level.NORMAL)
-@covers(R1)
+@pytest.mark.covers("R1")
 @pytest.mark.edge
 def test_surrounding_whitespace_is_trimmed(todo_page: TodoPage) -> None:
     """Leading and trailing spaces are not part of the stored item text."""
@@ -69,7 +68,7 @@ def test_surrounding_whitespace_is_trimmed(todo_page: TodoPage) -> None:
 
 @allure.id("ADD-3")
 @allure.severity(allure.severity_level.NORMAL)
-@covers(R1)
+@pytest.mark.covers("R1")
 @pytest.mark.edge
 @pytest.mark.parametrize("text", BLANK_CASES)
 def test_blank_input_does_not_add_an_item(todo_page: TodoPage, text: str, case_id: str) -> None:
@@ -86,7 +85,7 @@ def test_blank_input_does_not_add_an_item(todo_page: TodoPage, text: str, case_i
 @allure.id("ADD-4")
 @allure.title("Two items with identical text can coexist")
 @allure.severity(allure.severity_level.MINOR)
-@covers(R1)
+@pytest.mark.covers("R1")
 @pytest.mark.edge
 def test_duplicate_items_are_allowed(todo_page: TodoPage) -> None:
     """The application does not deduplicate items with the same text."""

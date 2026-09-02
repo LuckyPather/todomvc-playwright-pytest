@@ -8,7 +8,8 @@ built with Playwright for Python and pytest.
 ## Requirements coverage
 
 The requirements, with their acceptance criteria, are described in
-[docs/requirements.md](docs/requirements.md); each test links to the ones it verifies.
+[docs/requirements.md](docs/requirements.md); each test names the ones it verifies with
+`@pytest.mark.covers("R1", ...)`, which the Allure report shows as links.
 
 | # | Requirement | Covered by |
 |---|-------------|------------|
@@ -105,9 +106,9 @@ the page URL as attachments, and pytest markers appear as tags.
 ## Project structure
 
 ```
-conftest.py            fixtures (clean page, seeded todo list, case id), default application URL, Allure failure hook
+conftest.py            fixtures (clean page, seeded todo list, case id), default application URL, Allure hooks
 pages/todo_page.py     page object: locators, user actions (recorded as Allure steps) and filter routes
-tests/requirements.py  the requirements as data, plus the decorator that links a test to them
+tests/const.py         requirement ids and titles, the link target for the covers marker
 tests/seeds.py         shared test data: a seeded list with active and completed items
 tests/test_*.py        one file per functional area, assertions via expect()
 docs/requirements.md   the requirements with acceptance criteria

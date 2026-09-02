@@ -1,8 +1,19 @@
 """Page object for the TodoMVC demo application."""
 
+from typing import Literal
+
 from playwright.sync_api import Locator, Page
 
 APP_URL = "https://demo.playwright.dev/todomvc/"
+
+FilterName = Literal["All", "Active", "Completed"]
+
+# Hash route the application navigates to when a filter link is clicked.
+FILTER_ROUTES: dict[FilterName, str] = {
+    "All": r"#/$",
+    "Active": r"#/active$",
+    "Completed": r"#/completed$",
+}
 
 
 class TodoPage:
@@ -36,7 +47,8 @@ class TodoPage:
             self.add_todo(text)
 
     def item(self, text: str) -> Locator:
-        return self.todo_items.filter(has_text=text)
+        """The todo item whose title is exactly ``text``."""
+        return self.todo_items.filter(has=self.page.get_by_text(text, exact=True))
 
     def mark_completed(self, text: str) -> None:
         self.item(text).get_by_role("checkbox").check()
@@ -46,6 +58,6 @@ class TodoPage:
         item.hover()
         item.get_by_role("button", name="Delete").click()
 
-    def filter_by(self, name: str) -> None:
-        """Switch the current view. ``name`` is one of All, Active, Completed."""
+    def filter_by(self, name: FilterName) -> None:
+        """Switch the current view by clicking one of the footer filter links."""
         self.page.get_by_role("link", name=name, exact=True).click()

@@ -3,6 +3,8 @@
 import pytest
 from playwright.sync_api import expect
 
+from pages.todo_page import TodoPage
+
 ADD_CASES = [
     pytest.param("Buy groceries for the week", id="english-text"),
     pytest.param("Купить продукты на неделю", id="cyrillic"),
@@ -17,7 +19,7 @@ ADD_CASES = [
 
 
 @pytest.mark.parametrize("text", ADD_CASES)
-def test_new_todo_item_is_added(todo_page, text):
+def test_new_todo_item_is_added(todo_page: TodoPage, text: str) -> None:
     todo_page.add_todo(text)
 
     expect(todo_page.todo_titles).to_have_text([text])

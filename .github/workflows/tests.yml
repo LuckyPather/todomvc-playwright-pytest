@@ -54,6 +54,14 @@ jobs:
       - name: Run tests
         run: pytest -n auto
 
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 7
+
       - name: Upload traces and screenshots of failed tests
         if: failure()
         uses: actions/upload-artifact@v5
@@ -61,3 +69,34 @@ jobs:
           name: test-artifacts
           path: test-results/
           retention-days: 7
+
+  report:
+    # Publishes the Allure report of the main branch to GitHub Pages,
+    # for failed runs as well, so the latest state is always visible.
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Generate Allure report
+        run: |
+          npm install --global allure-commandline@2.43.0
+          allure generate allure-results --clean --output allure-report
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: allure-report
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

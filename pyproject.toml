@@ -1,9 +1,15 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "--strict-markers --screenshot only-on-failure --tracing retain-on-failure"
+addopts = """
+    --strict-markers
+    --screenshot only-on-failure
+    --tracing retain-on-failure
+    --alluredir allure-results --clean-alluredir
+"""
 markers = [
     "smoke: one fast representative scenario per functional area",
+    "edge: boundary and negative scenarios that go beyond the core requirements",
     "adding: adding new todo items",
     "completing: marking todo items as completed",
     "deleting: deleting todo items",

@@ -1,3 +1,6 @@
+from collections.abc import Generator
+
+import allure
 import pytest
 from playwright.sync_api import Page
 
@@ -23,3 +26,18 @@ def todo_page(page: Page) -> TodoPage:
 def seeded_todos(todo_page: TodoPage) -> SeededTodos:
     """A clean page pre-filled with three todos, one of them completed."""
     return SeededTodos.seed(todo_page)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> Generator:
+    """Attach a screenshot and the current URL to the Allure report of a failed test."""
+    outcome = yield
+    report = outcome.get_result()
+    page = item.funcargs.get("page") if hasattr(item, "funcargs") else None
+    if report.when == "call" and report.failed and page is not None and not page.is_closed():
+        allure.attach(page.url, name="url", attachment_type=allure.attachment_type.URI_LIST)
+        allure.attach(
+            page.screenshot(full_page=True),
+            name="screenshot",
+            attachment_type=allure.attachment_type.PNG,
+        )

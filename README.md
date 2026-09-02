@@ -17,6 +17,22 @@ built with Playwright for Python and pytest.
 | 6 | The "Active" filter correctly shows only items that are not completed | `tests/test_filtering.py::test_active_filter_shows_only_active_items` |
 | 7 | The "Completed" filter correctly shows only items that have been marked as completed | `tests/test_filtering.py::test_completed_filter_shows_only_completed_items` |
 
+### Beyond the requirements
+
+Boundary and negative scenarios around the required flows are marked `edge` (run or skip them
+with `-m edge` / `-m "not edge"`). They pin down behaviour that was verified against the live
+application first:
+
+| Scenario | Covered by |
+|----------|------------|
+| Single character, very long text, HTML markup shown as plain text | `test_new_todo_item_is_added` — cases `single-character`, `long-text`, `html-markup` |
+| Surrounding whitespace is trimmed | `test_surrounding_whitespace_is_trimmed` |
+| Empty or whitespace-only input adds nothing | `test_blank_input_does_not_add_an_item` — cases `empty`, `whitespace-only` |
+| Identical items can coexist | `test_duplicate_items_are_allowed` |
+| Deleting the only item leaves an empty list without a footer | `test_deleting_the_only_item_leaves_an_empty_list` |
+| Active filter is empty when everything is completed (counter reads "0 items left") | `test_active_filter_is_empty_when_every_item_is_completed` |
+| Completed filter is empty when nothing is completed | `test_completed_filter_is_empty_when_nothing_is_completed` |
+
 ## Getting started
 
 Prerequisites: Python 3.12 or newer.
@@ -54,6 +70,7 @@ pytest
 | Different browser | `pytest --browser firefox` (run `playwright install firefox` once) |
 | Parallel run | `pytest -n auto` |
 | Smoke subset (one scenario per area) | `pytest -m smoke` |
+| Core requirements only, without edge cases | `pytest -m "not edge"` |
 | One functional area | `pytest -m filtering` (also `adding`, `completing`, `deleting`) |
 | One parametrized case | `pytest -k cyrillic` |
 | Slow motion for debugging | `pytest --headed --slowmo 300` |
@@ -65,12 +82,26 @@ Markers are registered in `pyproject.toml` and enforced with `--strict-markers`;
 When a test fails, a screenshot and a Playwright trace are saved under `test-results/`.
 Open a trace with `playwright show-trace <path-to-trace.zip>`.
 
+## Reports
+
+Every run writes Allure results to `allure-results/`. To browse them locally, install the
+[Allure command line](https://allurereport.org/docs/install/) and run:
+
+```
+allure serve allure-results
+```
+
+The report of the latest `main` build is published to GitHub Pages:
+https://luckypather.github.io/todomvc-playwright-pytest/. Failed tests carry a screenshot and
+the page URL as attachments; pytest markers appear as tags.
+
 ## Project structure
 
 ```
-conftest.py            fixture: page object on a clean application state
+conftest.py            fixtures (clean page, seeded todo list) and the Allure failure hook
 pages/todo_page.py     page object: locators, user actions and filter routes for TodoMVC
-tests/                 one file per functional area, assertions via expect()
+tests/seeds.py         shared test data: a seeded list with active and completed items
+tests/test_*.py        one file per functional area, assertions via expect()
 pyproject.toml         pytest, ruff and black configuration
 requirements*.txt      pinned runtime and development dependencies
 .github/workflows/     CI pipeline
@@ -91,8 +122,15 @@ requirements*.txt      pinned runtime and development dependencies
   diacritics, emoji and HTML-sensitive special characters.
 - **Deletion is verified in all three views** (All, Active, Completed), matching the literal
   wording of the requirement, and for both an active and a completed item.
-- **Scope is limited to the seven required scenarios.** Adjacent features (editing, mark all as
-  complete, clearing completed, persistence across reloads) are deliberately out of scope.
+- **Shared setup lives in fixtures, not in tests.** Scenarios that start from "a list with one
+  completed item" use the `seeded_todos` fixture, which returns the seeded data alongside the
+  page, so expected values are derived from the same source as the setup. Scenarios where the
+  setup is the subject of the test (adding, completing) keep it inline for readability.
+- **Plain test functions, no test classes.** Grouping is done by module and by pytest markers,
+  which is all that a suite without shared mutable state needs.
+- **Scope stays around the seven required flows.** Edge cases cover boundaries of those flows;
+  adjacent features (editing, mark all as complete, clearing completed, persistence across
+  reloads) are deliberately out of scope.
 
 ## Development
 
@@ -106,7 +144,10 @@ black --check .
 
 ## Continuous integration
 
-GitHub Actions ([tests.yml](.github/workflows/tests.yml)) runs two jobs on every push and pull
-request: `lint` (ruff and black) and `test` (the suite, headless with Chromium, in parallel).
-For a failed run, screenshots and traces are attached to the run as the `test-artifacts`
-artifact.
+GitHub Actions ([tests.yml](.github/workflows/tests.yml)) runs on every push and pull request:
+
+- `lint`: ruff and black.
+- `test`: the suite, headless with Chromium, in parallel. Allure results are always uploaded as
+  the `allure-results` artifact; for a failed run, screenshots and traces are added as
+  `test-artifacts`.
+- `report` (pushes to `main` only): generates the Allure report and deploys it to GitHub Pages.
